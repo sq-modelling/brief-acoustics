@@ -4,9 +4,9 @@ All notable changes to BRIEF-Acoustics will be recorded in this file.
 
 ## Unreleased
 
-- Prepare the first public alpha release.
+No unreleased changes yet.
 
-## 0.1.0-alpha
+## 0.1.0-alpha.1 - 2026-08-29
 
 - Provide a Python TOML case runner and strict closed-surface mesh audit.
 - Provide the modern Fortran acoustic Helmholtz NSBEM core.
@@ -16,6 +16,3 @@ All notable changes to BRIEF-Acoustics will be recorded in this file.
 - Add analytical sphere, manufactured ellipsoid, fictitious-frequency, and
   matrix-level validation workflows.
 - Add an explicitly limited two-sphere small-gap demonstration.
-
-This section describes the release candidate. Its release date will be added
-when the GitHub tag is published.

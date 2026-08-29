@@ -14,7 +14,7 @@ Dirichlet, Neumann, and Robin boundary conditions.
 
 ## Status
 
-`v0.1.0-alpha` release candidate and research preview.
+`v0.1.0-alpha.1` public prerelease and research preview.
 
 The documented source-tree command `brief-acoustics run case.toml` validates a case and
 mesh, builds the Fortran driver, solves the boundary-value problem, and writes

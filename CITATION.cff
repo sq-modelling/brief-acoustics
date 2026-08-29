@@ -1,7 +1,8 @@
 cff-version: 1.2.0
 message: "If you use BRIEF-Acoustics in your research, please cite this software."
 title: "BRIEF-Acoustics: acoustic non-singular boundary element method solver"
-version: "0.1.0-alpha"
+version: "0.1.0-alpha.1"
+date-released: 2026-08-29
 url: "https://github.com/sq-modelling/brief-acoustics"
 repository-code: "https://github.com/sq-modelling/brief-acoustics"
 authors:

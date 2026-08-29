@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "brief-acoustics"
-version = "0.1.0-alpha"
+version = "0.1.0a1"
 description = "Non-singular boundary element solver for frequency-domain acoustic Helmholtz problems."
 readme = "README.md"
 requires-python = ">=3.10"
