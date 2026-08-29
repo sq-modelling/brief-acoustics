@@ -1,0 +1,45 @@
+.DS_Store
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+coverage.xml
+htmlcov/
+.venv/
+*.egg-info/
+/build/
+/dist/
+
+# Fortran build outputs
+fortran/build/
+fortran/bin/
+*.o
+*.mod
+*.smod
+*.dSYM/
+a.out
+
+# Generated validation outputs
+validation/*/results/
+validation/*/results_*/
+validation/*/.matplotlib/
+validation/*/.cache/
+examples/*/results/
+external-test-results/
+
+# Local working material, excluded from the public repository
+/paper/
+/internal/
+/docs/release-and-publication-roadmap.md
+/docs/package-status-review-*.md
+
+# Generated manuscript outputs
+paper/softwarex/build/
+paper/softwarex/figures/*.pdf
+
+# Runtime artifacts
+Input_*.dat
+Rslt_*.dat
+*.log

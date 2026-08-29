@@ -1,0 +1,74 @@
+cff-version: 1.2.0
+message: "If you use BRIEF-Acoustics in your research, please cite this software."
+title: "BRIEF-Acoustics: acoustic non-singular boundary element method solver"
+version: "0.1.0-alpha"
+url: "https://github.com/sq-modelling/brief-acoustics"
+repository-code: "https://github.com/sq-modelling/brief-acoustics"
+authors:
+  - family-names: "Sun"
+    given-names: "Qiang"
+    affiliation: "RMIT University"
+abstract: >-
+  BRIEF-Acoustics is a research-preview acoustic non-singular boundary element
+  method solver for frequency-domain Helmholtz problems. The current release
+  includes a modern Fortran solver core, a non-singular Burton-Miller
+  formulation, and a documented Python case-file workflow. Its validation set
+  covers analytical Dirichlet, Neumann, and Robin sphere-scattering benchmarks,
+  published fictitious-frequency regressions, and a non-spherical manufactured
+  solution.
+keywords:
+  - boundary element method
+  - non-singular boundary integral method
+  - acoustics
+  - Helmholtz equation
+  - Burton-Miller method
+  - scientific software validation
+  - Fortran
+  - Python
+license: "BSD-3-Clause"
+references:
+  - type: article
+    title: "Non-singular boundary integral methods for fluid mechanics applications"
+    authors:
+      - family-names: "Klaseboer"
+        given-names: "Evert"
+      - family-names: "Sun"
+        given-names: "Qiang"
+      - family-names: "Chan"
+        given-names: "Derek Y. C."
+    journal: "Journal of Fluid Mechanics"
+    volume: 696
+    start: 468
+    end: 478
+    year: 2012
+    doi: "10.1017/jfm.2012.71"
+    notes: "Foundational non-singular boundary integral method paper."
+  - type: article
+    title: "Boundary regularised integral equation formulation of the Helmholtz equation in acoustics"
+    authors:
+      - family-names: "Sun"
+        given-names: "Qiang"
+      - family-names: "Klaseboer"
+        given-names: "Evert"
+      - family-names: "Khoo"
+        given-names: "Boo Cheong"
+      - family-names: "Chan"
+        given-names: "Derek Y. C."
+    journal: "Royal Society Open Science"
+    volume: 2
+    year: 2015
+    doi: "10.1098/rsos.140520"
+    notes: "Acoustic Helmholtz BRIEF/NSBEM reference used by BRIEF-Acoustics."
+  - type: article
+    title: "Non-Singular Burton-Miller Boundary Element Method for Acoustics"
+    authors:
+      - family-names: "Sun"
+        given-names: "Qiang"
+      - family-names: "Klaseboer"
+        given-names: "Evert"
+    journal: "Fluids"
+    volume: 8
+    issue: 2
+    year: 2023
+    doi: "10.3390/fluids8020056"
+    notes: "Published non-singular Burton-Miller formulation implemented by the acoustic solver."

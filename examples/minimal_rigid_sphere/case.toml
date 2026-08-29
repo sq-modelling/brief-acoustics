@@ -1,0 +1,35 @@
+[case]
+name = "minimal-rigid-sphere"
+
+[mesh]
+# Paths are resolved relative to this TOML file, not the shell working directory.
+path = "../meshes/sphere_quadratic_162.dat"
+# Quadratic elements are the default; set element_type = "linear" to opt in.
+normal_orientation = "outward-from-solid"
+
+[physics]
+# Exactly one of frequency_hz, angular_frequency, or wavenumber is allowed.
+# With c=1, k=1 also gives omega=1 in this dimensionless demonstration.
+density = 1.0
+sound_speed = 1.0
+wavenumber = 1.0
+
+[solver]
+formulation = "ordinary"
+characteristic_length = 1.0
+
+[boundary]
+# A rigid sound-hard surface has zero total normal derivative.
+type = "neumann"
+value_real = 0.0
+value_imag = 0.0
+
+[incident]
+type = "plane-wave"
+potential_amplitude_real = 1.0
+potential_amplitude_imag = 0.0
+direction = [1.0, 0.0, 0.0]
+standing_wave = false
+
+[output]
+directory = "results"

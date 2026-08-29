@@ -1,0 +1,33 @@
+[case]
+name = "burton-miller-fictitious-sphere"
+
+[mesh]
+path = "../meshes/sphere_quadratic_642.dat"
+element_type = "quadratic"
+normal_orientation = "outward-from-solid"
+
+[physics]
+density = 1.0
+sound_speed = 1.0
+# For radius a=1, this is the published fictitious frequency ka=9.3558.
+wavenumber = 9.3558
+
+[solver]
+# Burton-Miller removes the ordinary exterior equation's non-uniqueness here.
+formulation = "burton-miller"
+characteristic_length = 1.0
+
+[boundary]
+type = "neumann"
+value_real = 0.0
+value_imag = 0.0
+
+[incident]
+type = "plane-wave"
+potential_amplitude_real = 1.0
+potential_amplitude_imag = 0.0
+direction = [1.0, 0.0, 0.0]
+standing_wave = false
+
+[output]
+directory = "results"

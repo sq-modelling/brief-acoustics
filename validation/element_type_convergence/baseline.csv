@@ -1,0 +1,8 @@
+formulation,element_type,nodes_per_element,subdivisions,nodes,elements,relative_l2_phi_sca,status,acceptance_rule
+ordinary,linear,3,2,162,320,3.10702380e-02,PASS,error <= 5.0e-2
+ordinary,linear,3,3,642,1280,7.77618603e-03,PASS,error <= 5.0e-2
+ordinary,quadratic,6,2,642,320,3.81824866e-04,PASS,error <= 5.0e-2
+burton-miller,linear,3,2,162,320,1.30346926e-01,REFINEMENT,error decreases under refinement
+burton-miller,linear,3,3,642,1280,7.20776527e-02,REFINEMENT,error decreases under refinement
+burton-miller,linear,3,4,2562,5120,3.72797804e-02,PASS,error <= 5.0e-2
+burton-miller,quadratic,6,2,642,320,5.86108131e-03,PASS,error <= 5.0e-2

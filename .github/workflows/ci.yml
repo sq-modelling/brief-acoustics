@@ -1,0 +1,45 @@
+name: Validation
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: validation-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  linux-validation:
+    name: Ubuntu / Python 3.12 / gfortran
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v7
+
+      - name: Set up Python
+        uses: actions/setup-python@v7
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: Install Fortran and BLAS/LAPACK toolchain
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y gfortran liblapack-dev libblas-dev
+
+      - name: Install BRIEF-Acoustics
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -e .
+
+      - name: Check installed command
+        run: brief-acoustics check examples/minimal_rigid_sphere/case.toml
+
+      - name: Run release validation
+        run: bash scripts/validate.sh

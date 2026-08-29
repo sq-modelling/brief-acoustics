@@ -1,0 +1,70 @@
+name: Bug report
+description: Report a reproducible problem in a supported BRIEF-Acoustics workflow.
+title: "[Bug]: "
+labels:
+  - bug
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thank you for reporting a problem. Please use a supplied example or a minimal non-confidential case when possible.
+        Do not include credentials, private paths, proprietary meshes, or unpublished data.
+
+  - type: input
+    id: release
+    attributes:
+      label: Release or commit
+      placeholder: v0.1.0-alpha or commit identifier
+    validations:
+      required: true
+
+  - type: textarea
+    id: environment
+    attributes:
+      label: Environment
+      description: Report the operating system, CPU architecture, Python version, gfortran version, and BLAS/LAPACK implementation.
+      placeholder: |
+        Ubuntu 24.04, x86_64
+        Python 3.12.3
+        GNU Fortran 13.3.0
+        Ubuntu BLAS/LAPACK packages
+    validations:
+      required: true
+
+  - type: textarea
+    id: reproduce
+    attributes:
+      label: Steps to reproduce
+      description: List the shortest commands and supplied or minimal input that reproduce the problem.
+      placeholder: |
+        1. python -m pip install -e .
+        2. brief-acoustics check examples/minimal_rigid_sphere/case.toml
+        3. ...
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behavior
+    validations:
+      required: true
+
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual behavior and relevant log excerpt
+      description: Include only the shortest useful error text after removing private information.
+      render: bash
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Checks
+      options:
+        - label: I confirmed that this case is inside the currently documented public scope.
+          required: true
+        - label: I removed credentials, private paths, and confidential data from this report.
+          required: true

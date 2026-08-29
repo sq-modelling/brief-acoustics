@@ -1,0 +1,34 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "brief-acoustics"
+version = "0.1.0-alpha"
+description = "Non-singular boundary element solver for frequency-domain acoustic Helmholtz problems."
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "BSD-3-Clause" }
+authors = [
+    { name = "Qiang Sun" },
+]
+dependencies = [
+    "matplotlib>=3.7",
+    "numpy>=1.24",
+    "scipy>=1.10",
+    "tomli>=2.0; python_version < '3.11'",
+]
+
+[project.scripts]
+brief-acoustics = "brief_acoustics.__main__:main"
+
+[project.urls]
+Homepage = "https://github.com/sq-modelling/brief-acoustics"
+Repository = "https://github.com/sq-modelling/brief-acoustics"
+Issues = "https://github.com/sq-modelling/brief-acoustics/issues"
+
+[tool.setuptools]
+package-dir = {"" = "python"}
+
+[tool.setuptools.packages.find]
+where = ["python"]

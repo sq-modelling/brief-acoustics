@@ -1,0 +1,4 @@
+case,folder,status,nodes,elements,relative_l2_phi_sca,max_abs_phi_sca_error,relative_l2_phi_total,max_robin_residual
+sub1,results_sub1,FAIL,42,80,3.79648852e-01,2.35688645e+00,4.36182655e-01,4.96506831e-16
+sub2,results_sub2,FAIL,162,320,1.05238782e-01,7.09911069e-01,1.20911147e-01,8.88178420e-16
+sub3,results,PASS,642,1280,2.84578742e-02,1.91381057e-01,3.26959199e-02,9.15513360e-16

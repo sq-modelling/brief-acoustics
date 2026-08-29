@@ -1,0 +1,108 @@
+name: External alpha test report
+description: Report a successful or unsuccessful fresh-install BRIEF-Acoustics alpha test.
+title: "[External test]: "
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thank you for testing BRIEF-Acoustics. Successful reports are as useful as failures.
+        Do not include credentials, private paths, proprietary meshes, or unpublished data.
+
+  - type: input
+    id: release
+    attributes:
+      label: Release or commit
+      description: Enter the exact release tag or commit identifier you tested.
+      placeholder: v0.1.0-alpha or commit identifier
+    validations:
+      required: true
+
+  - type: dropdown
+    id: operating_system
+    attributes:
+      label: Operating system
+      options:
+        - Ubuntu Linux
+        - macOS
+        - Other or currently unsupported
+    validations:
+      required: true
+
+  - type: input
+    id: architecture
+    attributes:
+      label: CPU architecture
+      placeholder: Apple arm64, Intel x86_64, AMD x86_64
+    validations:
+      required: true
+
+  - type: textarea
+    id: toolchain
+    attributes:
+      label: Toolchain
+      description: Report Python, gfortran, and BLAS/LAPACK versions when known.
+      placeholder: |
+        Python 3.12.2
+        GNU Fortran 14.2.0
+        Apple Accelerate or OpenBLAS/LAPACK version
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: required_workflow
+    attributes:
+      label: Level 1 workflow completed
+      description: Check each item that completed without changing source code.
+      options:
+        - label: Created a fresh virtual environment and installed the package.
+        - label: Checked the minimal rigid-sphere case successfully.
+        - label: Confirmed the case uses quadratic triangles with six nodes per element.
+        - label: Ran the minimal case to completion.
+        - label: Opened summary.json and the generated surface output.
+
+  - type: dropdown
+    id: level_one_outcome
+    attributes:
+      label: Level 1 outcome
+      options:
+        - Completed without assistance
+        - Completed with assistance
+        - Blocked before completion
+    validations:
+      required: true
+
+  - type: dropdown
+    id: full_validation
+    attributes:
+      label: Level 2 full validation
+      description: Did you run bash scripts/validate.sh?
+      options:
+        - Not run
+        - Passed
+        - Failed
+    validations:
+      required: true
+
+  - type: textarea
+    id: observations
+    attributes:
+      label: Observations or failure
+      description: Describe unclear instructions, assistance needed, unexpected output, or the point of failure.
+      placeholder: Include the exact command and expected versus actual behaviour.
+    validations:
+      required: true
+
+  - type: textarea
+    id: log_excerpt
+    attributes:
+      label: Relevant log excerpt
+      description: Paste only the shortest useful error or warning excerpt. Remove private paths and data.
+      render: bash
+
+  - type: checkboxes
+    id: confirmation
+    attributes:
+      label: Confirmation
+      options:
+        - label: I tested a fresh copy and removed sensitive or private information from this public report.
+          required: true
