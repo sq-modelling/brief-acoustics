@@ -17,6 +17,7 @@ program RunAUCase
     use AU_BoundaryConditions, only: au_plane_wave_type, reset_au_fields, &
                                      expand_particle_boundary_values, &
                                      set_plane_wave_incident_field
+    use AU_LayerTopology, only: burton_miller_coupling_length
     use AU_Solver, only: solve_au_surface
     implicit none
 
@@ -123,6 +124,10 @@ program RunAUCase
 
     write(*, '(A)') "BRIEF-Acoustics case solve completed."
     write(*, '(A)') "formulation = " // trim(formulation_mode)
+    if (trim(formulation_mode) == "burton-miller") then
+        write(*, '(A, ES24.16E3)') "burton_miller_coupling_length = ", &
+            burton_miller_coupling_length(case_data, 1)
+    end if
     write(*, '(A)') "boundary = " // trim(boundary_mode)
     write(*, '(A, I0)') "nodes = ", geometry%mesh%node_count
     write(*, '(A, I0)') "elements = ", geometry%mesh%element_count

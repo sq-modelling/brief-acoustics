@@ -5,7 +5,7 @@ from pathlib import Path
 import tempfile
 import unittest
 
-from brief_acoustics.case_config import CaseConfigurationError, load_case
+from brief_acoustics.case_config import CaseConfigurationError, SolverConfig, load_case
 from brief_acoustics.mesh_io import tetrahedron_mesh, write_fortran_mesh
 from brief_acoustics.runner import CaseRunError, check_case
 
@@ -109,6 +109,15 @@ rhs_real = 1.0""",
         )
         with self.assertRaisesRegex(CaseConfigurationError, "cannot both be zero"):
             load_case(case_path)
+
+    def test_burton_miller_coupling_length_has_low_and_high_frequency_scales(self) -> None:
+        solver = SolverConfig(
+            formulation="burton-miller",
+            characteristic_length=1.0,
+        )
+
+        self.assertAlmostEqual(solver.burton_miller_coupling_length(0.25), 1.0)
+        self.assertAlmostEqual(solver.burton_miller_coupling_length(2.0), 0.5)
 
     def _write_case(
         self,

@@ -40,6 +40,7 @@ module AU_LayerTopology
     public :: density_ratio_parent_to_child
     public :: bem_external_h_free_term
     public :: burton_miller_free_term
+    public :: burton_miller_coupling_length
     public :: burton_miller_coupling_weight
 
 contains
@@ -214,6 +215,39 @@ contains
                                        0.0_dp, kind=dp)
     end function burton_miller_free_term
 
+    pure real(dp) function burton_miller_coupling_length(case_data, particle_id)
+        ! Return the dimensional length beta used to couple the two equations.
+        !
+        ! The ordinary boundary integral equation and its normal derivative do
+        ! not have the same physical dimensions: normal differentiation adds
+        ! one factor of inverse length.  Multiplying the derivative equation by
+        ! beta, which has units of length, makes their sum dimensionally
+        ! homogeneous.  beta is therefore not an arbitrary tuning number.
+        !
+        ! Let a be a representative body length and k the positive acoustic
+        ! wavenumber.  This implementation uses
+        !
+        !   beta = min(a, 1/k).
+        !
+        ! Consequently beta=a for ka<=1 and beta=1/k for ka>1.  The first
+        ! branch prevents 1/k from becoming unbounded at low frequency; the
+        ! second follows the wavelength-related scale used in the published
+        ! high-frequency calculations.  For a sphere, a is normally its radius.
+        type(au_case_type), intent(in) :: case_data
+        integer, intent(in) :: particle_id
+
+        real(dp) :: body_length
+        real(dp) :: wavenumber_magnitude
+
+        body_length = case_data%layer(particle_id)%characteristic_length
+        wavenumber_magnitude = abs(exterior_domain_wavenumber(case_data, particle_id))
+
+        burton_miller_coupling_length = body_length
+        if (wavenumber_magnitude > tiny(1.0_dp)) then
+            burton_miller_coupling_length = min(body_length, 1.0_dp / wavenumber_magnitude)
+        end if
+    end function burton_miller_coupling_length
+
     pure complex(dp) function burton_miller_coupling_weight(case_data, particle_id)
         ! Return the Burton-Miller coupling weight for one particle.
         !
@@ -221,24 +255,23 @@ contains
         ! normal-derivative equation.  The coupling weight must have dimensions
         ! of length so the two equations are scaled compatibly.
         !
-        ! For the release's verified real-acoustic scope, the published choice
-        ! is beta = 1/k.  The code-space weight also contains the orientation of
-        ! the stored mesh normal:
+        ! burton_miller_coupling_length supplies the dimensional beta.  The
+        ! complex code-space weight also contains the orientation of the stored
+        ! mesh normal:
         !
         !   weight = i * exterior_free_term_sign * beta.
         !
         ! The standard mesh has outward-from-solid normals and exterior_free_term_sign=-1,
-        ! so this becomes -i/k.  AU_Solver rejects zero, negative, or complex
-        ! wavenumbers before this function is used by the release path.
+        ! so this becomes -i*beta.  AU_Solver rejects zero, negative, or complex
+        ! wavenumbers before this function is used by the public release path.
         type(au_case_type), intent(in) :: case_data
         integer, intent(in) :: particle_id
 
         real(dp) :: beta
-        complex(dp) :: k
 
-        k = exterior_domain_wavenumber(case_data, particle_id)
-        beta = 1.0_dp / abs(k)
-        burton_miller_coupling_weight = imaginary_unit * real(particle_exterior_free_term_sign(case_data, particle_id), dp) * beta
+        beta = burton_miller_coupling_length(case_data, particle_id)
+        burton_miller_coupling_weight = imaginary_unit * &
+            real(particle_exterior_free_term_sign(case_data, particle_id), dp) * beta
     end function burton_miller_coupling_weight
 
 end module AU_LayerTopology

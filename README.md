@@ -290,6 +290,23 @@ normal_orientation = "outward-from-solid"
 Python derives the internal exterior free-term sign from this orientation. The
 convention is validated by the analytical sphere tests.
 
+### Burton--Miller coupling length
+
+The Burton--Miller coupling is not an arbitrary dimensionless constant. The
+normal-derivative boundary integral equation contains one additional inverse
+length relative to the ordinary equation, so its coefficient must have units
+of length. BRIEF-Acoustics distinguishes:
+
+- `wavenumber` $k$, with units $L^{-1}$;
+- `characteristic_length` $a$, a representative body scale in mesh units; and
+- the coupling length $\beta=\min(a,1/k)$.
+
+Thus $\beta=a$ for $ka\leq1$ and $\beta=1/k$ for $ka>1$. For a sphere, $a$ is
+normally its radius. The complex row weight is $w=i\sigma\beta$, where
+$\sigma=-1$ for the supported outward-from-solid exterior mesh, giving
+$w=-i\beta$. The selected coupling length is recorded in the run log and JSON
+summary.
+
 ## Repository Layout
 
 ```text

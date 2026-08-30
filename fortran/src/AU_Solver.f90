@@ -229,9 +229,9 @@ contains
             return
         end select
 
-        ! beta=1/k is currently validated only for a real positive acoustic
-        ! wavenumber.  Complex Helmholtz and the k=0 Laplace limit need their
-        ! own coupling policy and tests.
+        ! The coupling length beta=min(a,1/k) is currently validated only for a
+        ! real positive acoustic wavenumber.  Complex Helmholtz and the k=0
+        ! Laplace limit need their own coupling policy and tests.
         wavenumber = case_data%exterior_medium%wavenumber
         real_wavenumber = real(wavenumber, kind=dp)
         imaginary_tolerance = 100.0_dp * epsilon(1.0_dp) * max(1.0_dp, abs(real_wavenumber))

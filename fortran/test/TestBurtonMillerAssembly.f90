@@ -7,7 +7,8 @@ program TestBurtonMillerAssembly
     use Geom_Types, only: geometry_type
     use AU_Types, only: au_case_type, allocate_au_case, &
                         bc_dirichlet_external, bc_neumann_external, bc_robin_external
-    use AU_LayerTopology, only: burton_miller_coupling_weight
+    use AU_LayerTopology, only: burton_miller_coupling_length, &
+                                burton_miller_coupling_weight
     use AU_SurfaceOperators, only: au_surface_operator_type
     use AU_Solver, only: assemble_au_linear_system
     implicit none
@@ -60,11 +61,32 @@ contains
     end subroutine prepare_minimal_case
 
     subroutine check_coupling_weight()
-        ! beta=1/k.  At k=2, reversing exterior_free_term_sign must reverse the imaginary
-        ! coupling weight while leaving its magnitude equal to 0.5.
+        ! beta=min(a,1/k) has two regimes.  With a=1, k=0.25 must use the
+        ! low-frequency body scale beta=1, while k=2 must use the
+        ! high-frequency wave scale beta=0.5.  Reversing the normal sign must
+        ! reverse the imaginary coupling weight without changing beta.
         complex(dp) :: actual_weight
+        real(dp) :: actual_length
+
+        case_data%exterior_medium%wavenumber = cmplx(0.25_dp, 0.0_dp, kind=dp)
+        actual_length = burton_miller_coupling_length(case_data, 1)
+        if (abs(actual_length - 1.0_dp) > comparison_tolerance) then
+            write(*, '(A)') "Burton-Miller low-frequency coupling length failed."
+            error stop 1
+        end if
+
+        actual_weight = burton_miller_coupling_weight(case_data, 1)
+        if (abs(actual_weight - cmplx(0.0_dp, -1.0_dp, kind=dp)) > comparison_tolerance) then
+            write(*, '(A)') "Burton-Miller low-frequency coupling weight failed."
+            error stop 1
+        end if
 
         case_data%exterior_medium%wavenumber = cmplx(2.0_dp, 0.0_dp, kind=dp)
+        actual_length = burton_miller_coupling_length(case_data, 1)
+        if (abs(actual_length - 0.5_dp) > comparison_tolerance) then
+            write(*, '(A)') "Burton-Miller high-frequency coupling length failed."
+            error stop 1
+        end if
 
         case_data%layer(1)%exterior_free_term_sign = -1
         actual_weight = burton_miller_coupling_weight(case_data, 1)

@@ -102,9 +102,14 @@ module AU_Types
         ! internal sign before a public solve.
         integer :: exterior_free_term_sign = 1
 
-        ! Reference particle length retained for geometry-dependent scaling and
-        ! future coupling policies.  The verified Burton-Miller acoustic path
-        ! currently follows the published beta=1/k choice instead.
+        ! Representative particle length a, in the same unit as the mesh.
+        !
+        ! The normal-derivative Burton-Miller equation carries one extra
+        ! inverse length compared with the ordinary boundary integral equation.
+        ! Its coupling coefficient beta must therefore have units of length.
+        ! The acoustic solver uses beta=min(a,1/k): the body scale a at low
+        ! frequency and the wavelength-related scale 1/k at high frequency.
+        ! For a sphere, a is normally its radius.
         real(dp) :: characteristic_length = 1.0_dp
     end type au_particle_layer_type
 

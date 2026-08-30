@@ -15,6 +15,7 @@ wavenumber = 9.3558
 [solver]
 # Burton-Miller removes the ordinary exterior equation's non-uniqueness here.
 formulation = "burton-miller"
+# Sphere radius a; beta=min(a,1/k)=1/k for this high-frequency case.
 characteristic_length = 1.0
 
 [boundary]

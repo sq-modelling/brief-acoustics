@@ -170,8 +170,27 @@ $$
 R_{\rm ordinary,paper}+i\beta R_{\rm normal,paper}=0. \tag{D}
 $$
 
-The parameter `beta` has dimensions of length. The paper identifies the object
-size and `1/k` as natural scales and uses `beta=1/k` in its rigid-sphere sweep.
+The parameter `beta` has dimensions of length; it is not an arbitrary
+dimensionless multiplier. Normal differentiation gives
+`R_normal` one additional inverse length relative to `R_ordinary`, so `beta`
+is required to make Equation (D) dimensionally homogeneous. The paper
+identifies the object size and `1/k` as natural scales and uses `beta=1/k` in
+its rigid-sphere sweep over `1 <= ka <= 40`.
+
+The public solver combines those two natural scales using
+
+$$
+\beta=\min\left(a,\frac{1}{k}\right)
+=\begin{cases}
+a, & ka\leq1,\\
+1/k, & ka>1,
+\end{cases} \tag{D1}
+$$
+
+where `a` is `characteristic_length` in the same unit as the mesh. The
+public input uses the representative half-width or radius directly.
+The low-frequency branch prevents `1/k` from becoming unbounded; the
+high-frequency branch reproduces the published sphere-sweep choice.
 
 ## 4. Normal Transformation and Coupling Sign
 

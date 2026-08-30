@@ -148,7 +148,30 @@ characteristic_length = 0.1
 ```
 
 `characteristic_length` is a positive representative body scale in the same
-length unit as the mesh. For a sphere it is normally the radius.
+length unit as the mesh. For a sphere it is normally the radius $a$. It is not
+itself a dimensionless Burton--Miller tuning number.
+
+The ordinary boundary integral equation and its normal derivative differ by
+one inverse length. BRIEF-Acoustics therefore forms the dimensional
+Burton--Miller coupling length
+
+```text
+beta = min(characteristic_length, 1 / wavenumber)
+```
+
+For $ka\leq1$, `beta` is the body scale $a$; for $ka>1$, it is the
+wavelength-related scale $1/k$. Both branches have units of length and make the
+combined equations dimensionally homogeneous. The final complex row weight
+also includes the normal-orientation sign:
+
+```text
+weight = i * exterior_free_term_sign * beta
+```
+
+For the supported outward-from-solid exterior mesh,
+`exterior_free_term_sign = -1`, so the weight is `-i * beta`. The run metadata
+records both `characteristic_length` and the selected
+`burton_miller_coupling_length`.
 
 The corresponding internal convention is:
 

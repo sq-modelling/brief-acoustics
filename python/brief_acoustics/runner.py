@@ -285,6 +285,18 @@ def build_run_summary(
 ) -> dict[str, object]:
     """Build a portable machine-readable summary without absolute host paths."""
 
+    solver_summary: dict[str, object] = {
+        "formulation": config.solver.formulation,
+        "characteristic_length": config.solver.characteristic_length,
+    }
+    if config.solver.formulation == "burton-miller":
+        solver_summary["burton_miller_coupling_length"] = (
+            config.solver.burton_miller_coupling_length(config.physics.wavenumber)
+        )
+        solver_summary["burton_miller_coupling_policy"] = (
+            "min(characteristic_length, 1/wavenumber)"
+        )
+
     return {
         "status": "completed",
         "case": config.name,
@@ -296,10 +308,7 @@ def build_run_summary(
             "wavenumber": config.physics.wavenumber,
             "time_convention": "exp(-i*omega*t)",
         },
-        "solver": {
-            "formulation": config.solver.formulation,
-            "characteristic_length": config.solver.characteristic_length,
-        },
+        "solver": solver_summary,
         "boundary": {
             "type": config.boundary.kind,
             "prescribed_value": _complex_pair(config.boundary.prescribed_value),

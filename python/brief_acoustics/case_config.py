@@ -70,6 +70,20 @@ class SolverConfig:
     formulation: str
     characteristic_length: float
 
+    def burton_miller_coupling_length(self, wavenumber: float) -> float:
+        """Return the dimensional Burton-Miller scale ``min(a, 1/k)``.
+
+        The normal-derivative boundary integral equation contains one more
+        inverse length than the ordinary equation.  Its coupling coefficient
+        must therefore be a length, not an arbitrary dimensionless number.
+        ``characteristic_length`` is the body scale ``a`` in mesh units, while
+        ``1 / wavenumber`` supplies the high-frequency wave scale.
+        """
+
+        if not math.isfinite(wavenumber) or wavenumber <= 0.0:
+            raise ValueError("Burton-Miller coupling requires a positive wavenumber.")
+        return min(self.characteristic_length, 1.0 / wavenumber)
+
 
 @dataclass(frozen=True)
 class BoundaryConfig:

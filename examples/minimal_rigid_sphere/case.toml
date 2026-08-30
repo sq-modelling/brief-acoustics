@@ -16,6 +16,7 @@ wavenumber = 1.0
 
 [solver]
 formulation = "ordinary"
+# Sphere radius a. If Burton-Miller is selected, beta=min(a,1/k).
 characteristic_length = 1.0
 
 [boundary]
