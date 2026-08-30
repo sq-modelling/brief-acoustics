@@ -48,7 +48,7 @@ contains
 
         case_data%use_burton_miller = .true.
         case_data%layer(1)%parent_particle_id = 0
-        case_data%layer(1)%exterior_free_term_sign = -1
+        case_data%layer(1)%exterior_domain_normal_sign = -1
         case_data%layer(1)%characteristic_length = 1.0_dp
 
         ! Non-zero incident fields make the right-hand-side checks meaningful.
@@ -88,22 +88,22 @@ contains
             error stop 1
         end if
 
-        case_data%layer(1)%exterior_free_term_sign = -1
+        case_data%layer(1)%exterior_domain_normal_sign = -1
         actual_weight = burton_miller_coupling_weight(case_data, 1)
         if (abs(actual_weight - cmplx(0.0_dp, -0.5_dp, kind=dp)) > comparison_tolerance) then
-            write(*, '(A)') "Burton-Miller coupling weight failed for exterior_free_term_sign=-1."
+            write(*, '(A)') "Burton-Miller coupling weight failed for exterior_domain_normal_sign=-1."
             error stop 1
         end if
 
-        case_data%layer(1)%exterior_free_term_sign = 1
+        case_data%layer(1)%exterior_domain_normal_sign = 1
         actual_weight = burton_miller_coupling_weight(case_data, 1)
         if (abs(actual_weight - cmplx(0.0_dp, 0.5_dp, kind=dp)) > comparison_tolerance) then
-            write(*, '(A)') "Burton-Miller coupling weight failed for exterior_free_term_sign=+1."
+            write(*, '(A)') "Burton-Miller coupling weight failed for exterior_domain_normal_sign=+1."
             error stop 1
         end if
 
         ! Restore the release convention used by the matrix cases below.
-        case_data%layer(1)%exterior_free_term_sign = -1
+        case_data%layer(1)%exterior_domain_normal_sign = -1
         write(*, '(A)') "Burton-Miller coupling weight: PASS"
     end subroutine check_coupling_weight
 

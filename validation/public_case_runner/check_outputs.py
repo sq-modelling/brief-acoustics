@@ -32,8 +32,10 @@ def main() -> int:
             raise AssertionError(f"Unexpected element type in {directory}")
         if summary["mesh"]["normal_orientation"] != "outward-from-solid":
             raise AssertionError(f"Unexpected normal orientation in {directory}")
-        if "exterior_free_term_sign" in summary["solver"]:
-            raise AssertionError("Internal free-term sign leaked into public result metadata")
+        if "exterior_domain_normal_sign" in summary["solver"]:
+            raise AssertionError(
+                "Internal exterior-domain normal sign leaked into public result metadata"
+            )
         for filename in summary["outputs"].values():
             if filename is not None and not (directory / filename).is_file():
                 raise AssertionError(f"Missing public-runner output: {directory / filename}")

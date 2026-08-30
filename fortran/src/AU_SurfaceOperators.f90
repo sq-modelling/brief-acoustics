@@ -18,7 +18,8 @@ module AU_SurfaceOperators
     use Pre_Constants, only: dp, complex_zero
     use Geom_Types, only: geometry_type
     use AU_Types, only: au_case_type
-    use AU_LayerTopology, only: bem_external_h_free_term, burton_miller_free_term, &
+    use AU_LayerTopology, only: bem_exterior_infinity_contribution, &
+                                burton_miller_infinity_contribution, &
                                 burton_miller_coupling_weight, exterior_domain_contains_particle, &
                                 exterior_domain_wavenumber, interior_domain_contains_particle, &
                                 interior_domain_wavenumber
@@ -51,7 +52,7 @@ module AU_SurfaceOperators
 
         ! Burton-Miller auxiliary blocks.  The short mathematical names used in
         ! docs/burton-miller-equation-map.md are shown below.  That document is
-        ! the authoritative source for signs and diagonal free terms.
+        ! the authoritative source for signs and explicit exterior 4*pi terms.
         ! K = normal derivative of the Helmholtz single-layer kernel.
         complex(dp), allocatable :: bm_dg_dn0(:, :)
         ! D = mixed-normal derivative of the Helmholtz kernel.
@@ -233,19 +234,25 @@ contains
                 end if
             end do
 
-            ! Add the analytical free term to the exterior H diagonal.
+            ! Add the exterior-at-infinity contribution to the H diagonal.
+            ! The local solid-angle coefficient has already cancelled in the
+            ! BRIEF subtraction; this explicit 4*pi term comes from infinity.
             operators%external_h(row_node, row_node) = &
-                operators%external_h(row_node, row_node) + bem_external_h_free_term(case_data, host_particle_id)
+                operators%external_h(row_node, row_node) + &
+                bem_exterior_infinity_contribution(case_data, host_particle_id)
 
             if (case_data%use_burton_miller) then
-                ! Add Burton-Miller free terms to the auxiliary diagonal blocks.
+                ! Add the corresponding exterior-at-infinity contributions to
+                ! the Burton-Miller auxiliary diagonal blocks.
                 operators%bm_dg_dn0(row_node, row_node) = &
-                    operators%bm_dg_dn0(row_node, row_node) - burton_miller_free_term(case_data, host_particle_id)
+                    operators%bm_dg_dn0(row_node, row_node) - &
+                    burton_miller_infinity_contribution(case_data, host_particle_id)
                 operators%bm_minus_dg0_dn0(row_node, row_node) = &
                     operators%bm_minus_dg0_dn0(row_node, row_node) + &
-                    burton_miller_free_term(case_data, host_particle_id)
+                    burton_miller_infinity_contribution(case_data, host_particle_id)
                 operators%bm_h0(row_node, row_node) = &
-                    operators%bm_h0(row_node, row_node) + burton_miller_free_term(case_data, host_particle_id)
+                    operators%bm_h0(row_node, row_node) + &
+                    burton_miller_infinity_contribution(case_data, host_particle_id)
             end if
         end do
 

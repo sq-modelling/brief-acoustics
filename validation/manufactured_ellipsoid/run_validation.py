@@ -12,9 +12,9 @@ derivative with the analytical gradient projected onto each mesh-node normal.
 
 This case exercises non-spherical geometry, spatially varying Dirichlet data,
 normal directions, operator assembly, and boundary-condition elimination.  It
-is deliberately smooth; a sharp-edged cube needs corner-specific free-term and
-normal treatment and should not be introduced as a routine regression without
-that analysis.
+is deliberately smooth; a sharp-edged cube needs a piecewise-smooth treatment
+of its multiple corner normals and should not be introduced as a routine
+regression without that analysis.
 """
 
 from __future__ import annotations
@@ -50,7 +50,7 @@ from brief_acoustics.mesh_io import (  # noqa: E402
     OUTWARD_FROM_SOLID,
     MeshNode,
     SurfaceMesh,
-    exterior_free_term_sign_for,
+    exterior_domain_normal_sign_for,
     write_fortran_mesh,
 )
 
@@ -233,7 +233,7 @@ def run_validation_executable(
             str(output_file),
             f"{config.wavenumber:.17g}",
             f"{max(config.semi_axes):.17g}",
-            str(exterior_free_term_sign_for(config.normal_orientation)),
+            str(exterior_domain_normal_sign_for(config.normal_orientation)),
             config.formulation,
             f"{source[0]:.17g}",
             f"{source[1]:.17g}",

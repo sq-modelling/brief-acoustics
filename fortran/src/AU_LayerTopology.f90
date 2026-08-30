@@ -15,7 +15,7 @@ module AU_LayerTopology
     !   - which source particles belong to a given exterior domain
     !   - which source particles belong to a given interior domain
     !   - which density and wavenumber belong to that domain
-    !   - what free-term constants should be added to the diagonal
+    !   - what exterior-at-infinity constants should be added to the diagonal
     !
     ! The topology queries are retained so the ordinary research path can
     ! represent more than one surface.  The public v1.0 runner nevertheless
@@ -29,7 +29,7 @@ module AU_LayerTopology
     private
 
     public :: particle_parent_id
-    public :: particle_exterior_free_term_sign
+    public :: particle_exterior_domain_normal_sign
     public :: exterior_domain_contains_particle
     public :: interior_domain_contains_particle
     public :: exterior_domain_has_infinity
@@ -38,8 +38,8 @@ module AU_LayerTopology
     public :: interior_domain_wavenumber
     public :: interior_domain_density
     public :: density_ratio_parent_to_child
-    public :: bem_external_h_free_term
-    public :: burton_miller_free_term
+    public :: bem_exterior_infinity_contribution
+    public :: burton_miller_infinity_contribution
     public :: burton_miller_coupling_length
     public :: burton_miller_coupling_weight
 
@@ -56,17 +56,20 @@ contains
         particle_parent_id = case_data%layer(particle_id)%parent_particle_id
     end function particle_parent_id
 
-    pure integer function particle_exterior_free_term_sign(case_data, particle_id)
-        ! Return the exterior free-term sign for one particle.
+    pure integer function particle_exterior_domain_normal_sign(case_data, particle_id)
+        ! Return the sign that maps the paper's exterior-domain normal to the
+        ! normal stored by the mesh.
         !
-        ! The mesh has a stored normal direction.  The boundary-integral free
-        ! terms depend on whether that stored normal agrees with the domain
-        ! normal used in the equation.  This sign carries that convention.
+        ! A value of +1 means the two normals agree; -1 means they are opposite.
+        ! The sign appears in normal derivatives, the explicit exterior 4*pi
+        ! contributions, and the Burton-Miller coupling transformation.  It is
+        ! an orientation sign, not a numerical solid-angle approximation.
         type(au_case_type), intent(in) :: case_data
         integer, intent(in) :: particle_id
 
-        particle_exterior_free_term_sign = case_data%layer(particle_id)%exterior_free_term_sign
-    end function particle_exterior_free_term_sign
+        particle_exterior_domain_normal_sign = &
+            case_data%layer(particle_id)%exterior_domain_normal_sign
+    end function particle_exterior_domain_normal_sign
 
     pure logical function exterior_domain_contains_particle(case_data, host_particle_id, source_particle_id)
         ! Decide whether source_particle_id belongs to the exterior domain of
@@ -183,37 +186,42 @@ contains
                                         interior_domain_density(case_data, child_particle_id)
     end function density_ratio_parent_to_child
 
-    pure complex(dp) function bem_external_h_free_term(case_data, particle_id)
-        ! Free-term contribution for the ordinary exterior BEM equation.
+    pure complex(dp) function bem_exterior_infinity_contribution(case_data, particle_id)
+        ! Return the explicit exterior-at-infinity contribution for H.
         !
-        ! With the Green-function convention used in this code, the full solid
-        ! angle coefficient for a smooth closed exterior boundary is represented
-        ! as 4*pi times the exterior free-term sign. For bounded exterior domains, this
-        ! ordinary exterior free term is not added here.
+        ! BRIEF subtracts an auxiliary Laplace boundary integral equation from
+        ! the Helmholtz equation.  Their local solid-angle coefficients c(x0)
+        ! cancel analytically.  For an unbounded exterior domain, however, the
+        ! auxiliary identity contains a contribution from the surface at
+        ! infinity.  With G=exp(i*k*r)/r that remaining contribution has
+        ! magnitude 4*pi; it is not a replacement for c(x0).  A bounded domain
+        ! has no surface-at-infinity contribution.
         type(au_case_type), intent(in) :: case_data
         integer, intent(in) :: particle_id
 
         if (exterior_domain_has_infinity(case_data, particle_id)) then
-            bem_external_h_free_term = cmplx(4.0_dp * pi * particle_exterior_free_term_sign(case_data, particle_id), &
-                                            0.0_dp, kind=dp)
+            bem_exterior_infinity_contribution = cmplx(4.0_dp * pi * &
+                particle_exterior_domain_normal_sign(case_data, particle_id), 0.0_dp, kind=dp)
         else
-            bem_external_h_free_term = complex_zero
+            bem_exterior_infinity_contribution = complex_zero
         end if
-    end function bem_external_h_free_term
+    end function bem_exterior_infinity_contribution
 
-    pure complex(dp) function burton_miller_free_term(case_data, particle_id)
-        ! Free-term contribution for Burton-Miller auxiliary equations.
+    pure complex(dp) function burton_miller_infinity_contribution(case_data, particle_id)
+        ! Return the exterior-at-infinity 4*pi contribution used by the
+        ! Burton-Miller auxiliary equations.
         !
-        ! The sign and 4*pi scale are the stored-mesh-normal form of the
-        ! published equation.  The full derivation and diagonal placement are
-        ! recorded in docs/burton-miller-equation-map.md.  The release path
-        ! calls this only after enforcing its single-particle exterior scope.
+        ! The local solid angle has already cancelled in the published BRIEF
+        ! derivation.  These remaining 4*pi terms come from the exterior
+        ! auxiliary Laplace identities and their surface at infinity.  The
+        ! release path calls this routine only after enforcing its
+        ! single-particle unbounded-exterior scope.
         type(au_case_type), intent(in) :: case_data
         integer, intent(in) :: particle_id
 
-        burton_miller_free_term = cmplx(4.0_dp * pi * particle_exterior_free_term_sign(case_data, particle_id), &
-                                       0.0_dp, kind=dp)
-    end function burton_miller_free_term
+        burton_miller_infinity_contribution = cmplx(4.0_dp * pi * &
+            particle_exterior_domain_normal_sign(case_data, particle_id), 0.0_dp, kind=dp)
+    end function burton_miller_infinity_contribution
 
     pure real(dp) function burton_miller_coupling_length(case_data, particle_id)
         ! Return the dimensional length beta used to couple the two equations.
@@ -259,9 +267,10 @@ contains
         ! complex code-space weight also contains the orientation of the stored
         ! mesh normal:
         !
-        !   weight = i * exterior_free_term_sign * beta.
+        !   weight = i * exterior_domain_normal_sign * beta.
         !
-        ! The standard mesh has outward-from-solid normals and exterior_free_term_sign=-1,
+        ! The standard mesh has outward-from-solid normals and
+        ! exterior_domain_normal_sign=-1,
         ! so this becomes -i*beta.  AU_Solver rejects zero, negative, or complex
         ! wavenumbers before this function is used by the public release path.
         type(au_case_type), intent(in) :: case_data
@@ -271,7 +280,7 @@ contains
 
         beta = burton_miller_coupling_length(case_data, particle_id)
         burton_miller_coupling_weight = imaginary_unit * &
-            real(particle_exterior_free_term_sign(case_data, particle_id), dp) * beta
+            real(particle_exterior_domain_normal_sign(case_data, particle_id), dp) * beta
     end function burton_miller_coupling_weight
 
 end module AU_LayerTopology

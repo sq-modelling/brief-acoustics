@@ -48,7 +48,7 @@ from brief_acoustics.mesh_io import (  # noqa: E402
     DEFAULT_ELEMENT_TYPE,
     OUTWARD_FROM_SOLID,
     SurfaceMesh,
-    exterior_free_term_sign_for,
+    exterior_domain_normal_sign_for,
     write_fortran_mesh,
 )
 
@@ -165,7 +165,7 @@ def run_robin_validation_executable(mesh_file: Path, output_file: Path, config: 
             str(output_file),
             f"{config.wavenumber:.17g}",
             f"{config.radius:.17g}",
-            str(exterior_free_term_sign_for(config.normal_orientation)),
+            str(exterior_domain_normal_sign_for(config.normal_orientation)),
             "robin",
             f"{config.robin_a:.17g}",
             f"{config.robin_b:.17g}",

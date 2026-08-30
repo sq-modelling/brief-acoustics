@@ -53,7 +53,7 @@ from brief_acoustics.mesh_io import (  # noqa: E402
     OUTWARD_FROM_SOLID,
     QUADRATIC_ELEMENT,
     SurfaceMesh,
-    exterior_free_term_sign_for,
+    exterior_domain_normal_sign_for,
     write_fortran_mesh,
 )
 
@@ -258,7 +258,7 @@ def run_solver(
             str(output_file),
             f"{wavenumber:.17g}",
             f"{config.radius:.17g}",
-            str(exterior_free_term_sign_for(config.normal_orientation)),
+            str(exterior_domain_normal_sign_for(config.normal_orientation)),
             "neumann",
             "1.0",
             "0.5",

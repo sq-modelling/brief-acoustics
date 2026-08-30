@@ -212,10 +212,10 @@ contains
 
         ! The first certified path assumes the mesh nodes are ordered so the
         ! geometric normals point outward from the solid.  In this convention
-        ! the acoustic exterior-domain free-term sign is -1.
-        if (case_data%layer(1)%exterior_free_term_sign /= -1) then
+        ! the acoustic exterior-domain normal sign is -1.
+        if (case_data%layer(1)%exterior_domain_normal_sign /= -1) then
             status = 1
-            message = "The current Burton-Miller release requires an outward-from-solid mesh and exterior_free_term_sign=-1."
+            message = "The current Burton-Miller release requires an outward-from-solid mesh and exterior_domain_normal_sign=-1."
             return
         end if
 

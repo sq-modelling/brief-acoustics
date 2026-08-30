@@ -45,8 +45,13 @@ def element_type_for(nodes_per_element: int) -> str:
     raise ValueError("nodes_per_element must be 3 or 6.")
 
 
-def exterior_free_term_sign_for(normal_orientation: str) -> int:
-    """Derive the internal exterior free-term sign from a readable orientation."""
+def exterior_domain_normal_sign_for(normal_orientation: str) -> int:
+    """Map the stored mesh normal to the exterior-domain normal.
+
+    The returned sign ``sigma`` satisfies
+    ``n_mesh = sigma * n_exterior_domain``.  It is an orientation convention,
+    not a solid-angle value or numerical boundary coefficient.
+    """
 
     if normal_orientation != OUTWARD_FROM_SOLID:
         raise ValueError(

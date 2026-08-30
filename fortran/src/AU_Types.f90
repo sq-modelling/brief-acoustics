@@ -94,13 +94,15 @@ module AU_Types
         ! require dedicated derivation and tests before they can be released.
         integer :: parent_particle_id = 0
 
-        ! Sign multiplying exterior-domain free terms in the boundary-integral
-        ! equations. For an isolated solid whose stored mesh normals point
-        ! outward into the fluid, this value is -1.  The value +1 below is only
-        ! an unconfigured allocation default.  User-facing input describes the
-        ! normal orientation in words, and Python derives and overwrites this
-        ! internal sign before a public solve.
-        integer :: exterior_free_term_sign = 1
+        ! Sign sigma in n_mesh = sigma*n_exterior_domain.
+        !
+        ! For an isolated solid whose stored mesh normals point outward into
+        ! the fluid, the exterior-domain normal points into the solid and sigma
+        ! is -1.  The value +1 below is only an unconfigured allocation default.
+        ! User-facing input describes the normal orientation in words, and
+        ! Python derives and overwrites this internal sign before a public
+        ! solve.  This is an orientation sign, not a solid-angle coefficient.
+        integer :: exterior_domain_normal_sign = 1
 
         ! Representative particle length a, in the same unit as the mesh.
         !
@@ -491,7 +493,7 @@ contains
         ! Basic checks for this particle's immediate layer data.
         is_valid_layer = parent_id >= 0 .and. parent_id <= particle_count .and. &
                          parent_id /= particle_id .and. &
-                         abs(case_data%layer(particle_id)%exterior_free_term_sign) == 1 .and. &
+                         abs(case_data%layer(particle_id)%exterior_domain_normal_sign) == 1 .and. &
                          case_data%layer(particle_id)%characteristic_length > 0.0_dp
         if (.not. is_valid_layer) return
 

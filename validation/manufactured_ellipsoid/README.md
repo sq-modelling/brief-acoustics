@@ -49,5 +49,6 @@ Burton-Miller quadratic, 642 nodes: relative L2 dphi/dn = 9.36468404e-03
 Both are checked against a fixed `5%` acceptance limit.
 
 The smooth ellipsoid is intentional. A sharp-edged cube requires explicit
-corner free-term and normal treatment; adding it without that analysis would
-mix a geometry-regularity question into this solver regression.
+piecewise-smooth treatment of its multiple corner normals; adding it without
+that analysis would mix a geometry-regularity question into this solver
+regression.

@@ -60,7 +60,7 @@ from brief_acoustics.mesh_io import (  # noqa: E402
     MeshElement,
     MeshNode,
     SurfaceMesh,
-    exterior_free_term_sign_for,
+    exterior_domain_normal_sign_for,
     write_fortran_mesh,
 )
 
@@ -180,7 +180,7 @@ def run_validation_executable(mesh_file: Path, output_file: Path, config: Valida
             str(output_file),
             f"{config.wavenumber:.17g}",
             f"{config.radius:.17g}",
-            str(exterior_free_term_sign_for(config.normal_orientation)),
+            str(exterior_domain_normal_sign_for(config.normal_orientation)),
             "neumann",
             "1.0",
             "0.5",

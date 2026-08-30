@@ -49,7 +49,7 @@ from brief_acoustics.mesh_io import (  # noqa: E402
     DEFAULT_ELEMENT_TYPE,
     OUTWARD_FROM_SOLID,
     SurfaceMesh,
-    exterior_free_term_sign_for,
+    exterior_domain_normal_sign_for,
     write_fortran_mesh,
 )
 
@@ -159,7 +159,7 @@ def run_validation_executable(
             str(output_file),
             f"{config.wavenumber:.17g}",
             f"{config.radius:.17g}",
-            str(exterior_free_term_sign_for(config.normal_orientation)),
+            str(exterior_domain_normal_sign_for(config.normal_orientation)),
             "dirichlet",
             "1.0",
             "0.0",

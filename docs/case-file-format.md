@@ -95,7 +95,9 @@ outward from the solid into the acoustic fluid.
 
 Python audits the source mesh and writes a normalized copy named `mesh.dat`
 into the result directory for Fortran. From `normal_orientation`, it derives
-the internal exterior free-term sign. Users do not set that equation sign.
+the internal exterior-domain normal sign. This sign maps the stored mesh normal
+to the normal used in the exterior equation; it is not a solid-angle value.
+Users do not set it directly.
 
 ## 4. Physics Table
 
@@ -165,11 +167,11 @@ combined equations dimensionally homogeneous. The final complex row weight
 also includes the normal-orientation sign:
 
 ```text
-weight = i * exterior_free_term_sign * beta
+weight = i * exterior_domain_normal_sign * beta
 ```
 
 For the supported outward-from-solid exterior mesh,
-`exterior_free_term_sign = -1`, so the weight is `-i * beta`. The run metadata
+`exterior_domain_normal_sign = -1`, so the weight is `-i * beta`. The run metadata
 records both `characteristic_length` and the selected
 `burton_miller_coupling_length`.
 
@@ -178,11 +180,17 @@ The corresponding internal convention is:
 ```text
 mesh normal: points outward from the solid into the acoustic fluid
 exterior-domain normal: points in the opposite direction
-derived exterior free-term sign: -1
+derived exterior-domain normal sign: -1
 ```
 
 The case parser rejects any unsupported `normal_orientation` instead of asking
 users to encode this sign convention numerically.
+
+The BRIEF subtraction cancels the local solid-angle coefficient analytically.
+No `1/2` or `2*pi` smooth-boundary substitute is supplied by the case layer.
+The explicit `4*pi` terms in the unbounded-exterior operator come from the
+surface at infinity in the auxiliary Laplace identity, not from the local
+solid angle.
 
 Use `ordinary` for controlled low-frequency work away from fictitious
 frequencies. Use `burton-miller` for robust exterior frequency sweeps and when

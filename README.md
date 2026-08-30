@@ -287,8 +287,17 @@ The public case file describes mesh normals directly:
 normal_orientation = "outward-from-solid"
 ```
 
-Python derives the internal exterior free-term sign from this orientation. The
-convention is validated by the analytical sphere tests.
+Python derives an internal exterior-domain normal sign from this orientation.
+It maps the stored mesh normal to the normal used by the exterior-domain
+equations; it is not a solid-angle coefficient. The convention is validated by
+the analytical sphere tests.
+
+BRIEF cancels the local solid-angle coefficient $c(\mathbf{x}_0)$ analytically.
+The implementation therefore never substitutes the smooth-surface value
+$1/2$, or equivalently $2\pi$ for the unnormalised Green function. Explicit
+$4\pi$ diagonal contributions remain in the unbounded-exterior equations.
+They originate from the auxiliary Laplace identity on the surface at infinity,
+not from a local solid-angle approximation.
 
 ### Burton--Miller coupling length
 

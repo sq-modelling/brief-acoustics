@@ -32,20 +32,20 @@ program ValidateRigidSphere
     real(dp) :: radius
     real(dp) :: robin_a
     real(dp) :: robin_b
-    integer :: exterior_free_term_sign
+    integer :: exterior_domain_normal_sign
     integer :: status
 
     wavenumber = 1.0_dp
     radius = 1.0_dp
     robin_a = 1.0_dp
     robin_b = 0.5_dp
-    exterior_free_term_sign = -1
+    exterior_domain_normal_sign = -1
     boundary_mode = "neumann"
     formulation_mode = "ordinary"
 
     if (command_argument_count() < 2) then
         write(*, '(A)') "Usage: validate_rigid_sphere mesh_file output_csv " // &
-                        "[wavenumber] [radius] [exterior_free_term_sign] [dirichlet|neumann|robin] " // &
+                        "[wavenumber] [radius] [exterior_domain_normal_sign] [dirichlet|neumann|robin] " // &
                         "[robin_a] [robin_b] [ordinary|burton-miller]"
         error stop 2
     end if
@@ -65,7 +65,7 @@ program ValidateRigidSphere
 
     if (command_argument_count() >= 5) then
         call get_command_argument(5, argument)
-        read(argument, *) exterior_free_term_sign
+        read(argument, *) exterior_domain_normal_sign
     end if
 
     if (command_argument_count() >= 6) then
@@ -99,7 +99,7 @@ program ValidateRigidSphere
     call require_ok(status, message)
 
     call configure_sphere_case(geometry, case_data, wave, wavenumber, radius, &
-                               exterior_free_term_sign, trim(boundary_mode), robin_a, robin_b, &
+                               exterior_domain_normal_sign, trim(boundary_mode), robin_a, robin_b, &
                                trim(formulation_mode))
 
     call reset_au_fields(case_data, status, message)
@@ -123,7 +123,7 @@ program ValidateRigidSphere
 contains
 
     subroutine configure_sphere_case(geometry, case_data, wave, wavenumber, radius, &
-                                     exterior_free_term_sign, boundary_mode, robin_a, robin_b, formulation_mode)
+                                     exterior_domain_normal_sign, boundary_mode, robin_a, robin_b, formulation_mode)
         ! Fill one allocated case with nondimensional sphere-test data.
         !
         ! The validation sets density and sound speed to one, so omega=k.  The
@@ -134,7 +134,7 @@ contains
         type(au_plane_wave_type), intent(inout) :: wave
         real(dp), intent(in) :: wavenumber
         real(dp), intent(in) :: radius
-        integer, intent(in) :: exterior_free_term_sign
+        integer, intent(in) :: exterior_domain_normal_sign
         character(len=*), intent(in) :: boundary_mode
         real(dp), intent(in) :: robin_a
         real(dp), intent(in) :: robin_b
@@ -162,7 +162,7 @@ contains
             case_data%interior_medium(particle_id)%wavenumber = cmplx(wavenumber, 0.0_dp, kind=dp)
 
             case_data%layer(particle_id)%parent_particle_id = 0
-            case_data%layer(particle_id)%exterior_free_term_sign = exterior_free_term_sign
+            case_data%layer(particle_id)%exterior_domain_normal_sign = exterior_domain_normal_sign
             case_data%layer(particle_id)%characteristic_length = radius
 
             select case (boundary_mode)

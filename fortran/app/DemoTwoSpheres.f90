@@ -33,12 +33,12 @@ program DemoTwoSpheres
     real(dp) :: normal_derivative_1_imag
     real(dp) :: normal_derivative_2_real
     real(dp) :: normal_derivative_2_imag
-    integer :: exterior_free_term_sign
+    integer :: exterior_domain_normal_sign
     integer :: status
 
     wavenumber = 1.5707963267948966_dp
     radius = 1.0_dp
-    exterior_free_term_sign = -1
+    exterior_domain_normal_sign = -1
     normal_derivative_1_real = 1.0_dp
     normal_derivative_1_imag = 0.0_dp
     normal_derivative_2_real = -1.0_dp
@@ -46,7 +46,7 @@ program DemoTwoSpheres
 
     if (command_argument_count() < 2) then
         write(*, '(A)') "Usage: demo_two_spheres mesh_file output_csv " // &
-                        "[wavenumber] [radius] [exterior_free_term_sign] " // &
+                        "[wavenumber] [radius] [exterior_domain_normal_sign] " // &
                         "[dphi_dn_1_re] [dphi_dn_1_im] [dphi_dn_2_re] [dphi_dn_2_im]"
         error stop 2
     end if
@@ -64,7 +64,7 @@ program DemoTwoSpheres
     end if
     if (command_argument_count() >= 5) then
         call get_command_argument(5, argument)
-        read(argument, *) exterior_free_term_sign
+        read(argument, *) exterior_domain_normal_sign
     end if
     if (command_argument_count() >= 6) then
         call get_command_argument(6, argument)
@@ -95,7 +95,7 @@ program DemoTwoSpheres
     call allocate_au_case(case_data, geometry, status, message)
     call require_ok(status, message)
 
-    call configure_two_sphere_case(geometry, case_data, wavenumber, radius, exterior_free_term_sign, &
+    call configure_two_sphere_case(geometry, case_data, wavenumber, radius, exterior_domain_normal_sign, &
                                    cmplx(normal_derivative_1_real, normal_derivative_1_imag, kind=dp), &
                                    cmplx(normal_derivative_2_real, normal_derivative_2_imag, kind=dp))
 
@@ -116,7 +116,7 @@ program DemoTwoSpheres
 contains
 
     subroutine configure_two_sphere_case(geometry, case_data, wavenumber, radius, &
-                                         exterior_free_term_sign, prescribed_normal_derivative_1, &
+                                         exterior_domain_normal_sign, prescribed_normal_derivative_1, &
                                          prescribed_normal_derivative_2)
         ! Configure the ordinary exterior two-particle demonstration.
         !
@@ -128,7 +128,7 @@ contains
         type(au_case_type), intent(inout) :: case_data
         real(dp), intent(in) :: wavenumber
         real(dp), intent(in) :: radius
-        integer, intent(in) :: exterior_free_term_sign
+        integer, intent(in) :: exterior_domain_normal_sign
         complex(dp), intent(in) :: prescribed_normal_derivative_1
         complex(dp), intent(in) :: prescribed_normal_derivative_2
 
@@ -151,7 +151,7 @@ contains
             case_data%interior_medium(particle_id)%wavenumber = cmplx(wavenumber, 0.0_dp, kind=dp)
 
             case_data%layer(particle_id)%parent_particle_id = 0
-            case_data%layer(particle_id)%exterior_free_term_sign = exterior_free_term_sign
+            case_data%layer(particle_id)%exterior_domain_normal_sign = exterior_domain_normal_sign
             case_data%layer(particle_id)%characteristic_length = radius
 
             case_data%boundary_condition(particle_id)%kind = bc_neumann_external

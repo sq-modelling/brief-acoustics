@@ -39,7 +39,7 @@ program RunAUCase
     real(dp) :: exterior_sound_speed
     real(dp) :: characteristic_length
     real(dp) :: incident_direction(3)
-    integer :: exterior_free_term_sign
+    integer :: exterior_domain_normal_sign
     logical :: standing_wave
 
     complex(dp) :: prescribed_boundary_data
@@ -52,7 +52,7 @@ program RunAUCase
     integer :: status
 
     namelist /au_case_input/ wavenumber, angular_frequency, exterior_density, &
-        exterior_sound_speed, exterior_free_term_sign, characteristic_length, formulation_mode, &
+        exterior_sound_speed, exterior_domain_normal_sign, characteristic_length, formulation_mode, &
         boundary_mode, prescribed_boundary_data, robin_a, robin_b, robin_rhs, incident_mode, &
         incident_potential_amplitude, incident_direction, standing_wave
 
@@ -62,7 +62,7 @@ program RunAUCase
     exterior_density = -1.0_dp
     exterior_sound_speed = -1.0_dp
     characteristic_length = -1.0_dp
-    exterior_free_term_sign = 0
+    exterior_domain_normal_sign = 0
     formulation_mode = ""
     boundary_mode = ""
     incident_mode = ""
@@ -159,8 +159,8 @@ contains
         else if (.not. ieee_is_finite(characteristic_length) .or. &
                  characteristic_length <= 0.0_dp) then
             call set_failure(status, message, "Characteristic length must be finite and positive.")
-        else if (exterior_free_term_sign /= -1) then
-            call set_failure(status, message, "Public exterior cases require exterior_free_term_sign=-1.")
+        else if (exterior_domain_normal_sign /= -1) then
+            call set_failure(status, message, "Public exterior cases require exterior_domain_normal_sign=-1.")
         end if
 
         frequency_scale = max(1.0_dp, abs(angular_frequency), &
@@ -240,7 +240,7 @@ contains
         case_data%interior_medium(1)%wavenumber = cmplx(wavenumber, 0.0_dp, kind=dp)
 
         case_data%layer(1)%parent_particle_id = 0
-        case_data%layer(1)%exterior_free_term_sign = exterior_free_term_sign
+        case_data%layer(1)%exterior_domain_normal_sign = exterior_domain_normal_sign
         case_data%layer(1)%characteristic_length = characteristic_length
 
         select case (trim(boundary_mode))

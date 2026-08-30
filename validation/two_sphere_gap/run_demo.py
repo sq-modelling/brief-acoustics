@@ -54,7 +54,7 @@ from brief_acoustics.mesh_io import (  # noqa: E402
     MeshElement,
     MeshNode,
     SurfaceMesh,
-    exterior_free_term_sign_for,
+    exterior_domain_normal_sign_for,
     write_fortran_mesh,
 )
 
@@ -156,7 +156,7 @@ def run_demo_executable(mesh_file: Path, output_file: Path, config: DemoConfig) 
             str(output_file),
             f"{config.wavenumber:.17g}",
             f"{config.radius:.17g}",
-            str(exterior_free_term_sign_for(config.normal_orientation)),
+            str(exterior_domain_normal_sign_for(config.normal_orientation)),
             f"{config.prescribed_normal_derivative_1.real:.17g}",
             f"{config.prescribed_normal_derivative_1.imag:.17g}",
             f"{config.prescribed_normal_derivative_2.real:.17g}",
@@ -299,13 +299,13 @@ def field_point_phi(
     The element-node ordering supplies the stored mesh normal. Equation (4.1) uses
     the outward normal of the solution domain.  For an exterior problem with an
     outward-from-solid mesh these directions are opposite. The readable normal
-    orientation is converted to the internal exterior free-term sign here.
+    orientation is converted to the internal exterior-domain normal sign here.
     Both dG/dn and dphi/dn change sign together, giving one overall factor.
 
     The input field point must be in the exterior fluid, not on the boundary.
     """
 
-    exterior_free_term_sign = exterior_free_term_sign_for(normal_orientation)
+    exterior_domain_normal_sign = exterior_domain_normal_sign_for(normal_orientation)
 
     total = 0.0 + 0.0j
     nodes_xyz = np.array([(node.x, node.y, node.z) for node in mesh.nodes], dtype=float)
@@ -343,7 +343,7 @@ def field_point_phi(
             dgreen_dn = dgreen_dr * np.dot(source_minus_field, normal) / distance
             total += (-phi_q * dgreen_dn + dphi_q * green) * jacobian * weight
 
-    return exterior_free_term_sign * total / (4.0 * math.pi)
+    return exterior_domain_normal_sign * total / (4.0 * math.pi)
 
 
 def triangle_shape_functions(

@@ -17,7 +17,7 @@ from typing import Any, Mapping
 from .mesh_io import (
     DEFAULT_ELEMENT_TYPE,
     OUTWARD_FROM_SOLID,
-    exterior_free_term_sign_for,
+    exterior_domain_normal_sign_for,
     nodes_per_element_for,
 )
 
@@ -57,10 +57,10 @@ class MeshConfig:
         return nodes_per_element_for(self.element_type)
 
     @property
-    def exterior_free_term_sign(self) -> int:
-        """Internal equation sign derived from the stated mesh orientation."""
+    def exterior_domain_normal_sign(self) -> int:
+        """Internal mesh-to-exterior-domain normal orientation sign."""
 
-        return exterior_free_term_sign_for(self.normal_orientation)
+        return exterior_domain_normal_sign_for(self.normal_orientation)
 
 
 @dataclass(frozen=True)
@@ -188,7 +188,7 @@ def write_runtime_namelist(config: CaseConfig, path: Path) -> None:
         f"  angular_frequency = {_fortran_real(config.physics.angular_frequency)}\n",
         f"  exterior_density = {_fortran_real(config.physics.density)}\n",
         f"  exterior_sound_speed = {_fortran_real(config.physics.sound_speed)}\n",
-        f"  exterior_free_term_sign = {config.mesh.exterior_free_term_sign}\n",
+        f"  exterior_domain_normal_sign = {config.mesh.exterior_domain_normal_sign}\n",
         f"  characteristic_length = {_fortran_real(config.solver.characteristic_length)}\n",
         f"  formulation_mode = '{config.solver.formulation}'\n",
         f"  boundary_mode = '{boundary.kind}'\n",

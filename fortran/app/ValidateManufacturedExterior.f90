@@ -31,18 +31,18 @@ program ValidateManufacturedExterior
     real(dp) :: wavenumber
     real(dp) :: characteristic_length
     real(dp) :: source_position(3)
-    integer :: exterior_free_term_sign
+    integer :: exterior_domain_normal_sign
     integer :: status
 
     wavenumber = 1.0_dp
     characteristic_length = 1.0_dp
-    exterior_free_term_sign = -1
+    exterior_domain_normal_sign = -1
     formulation_mode = "ordinary"
     source_position = 0.0_dp
 
     if (command_argument_count() < 2) then
         write(*, '(A)') "Usage: validate_manufactured_exterior mesh_file output_csv " // &
-                        "[wavenumber] [characteristic_length] [exterior_free_term_sign] " // &
+                        "[wavenumber] [characteristic_length] [exterior_domain_normal_sign] " // &
                         "[ordinary|burton-miller] [source_x] [source_y] [source_z]"
         error stop 2
     end if
@@ -62,7 +62,7 @@ program ValidateManufacturedExterior
 
     if (command_argument_count() >= 5) then
         call get_command_argument(5, argument)
-        read(argument, *) exterior_free_term_sign
+        read(argument, *) exterior_domain_normal_sign
     end if
 
     if (command_argument_count() >= 6) then
@@ -101,7 +101,7 @@ program ValidateManufacturedExterior
     call allocate_au_case(case_data, geometry, status, message)
     call require_ok(status, message)
 
-    call configure_case(case_data, wavenumber, characteristic_length, exterior_free_term_sign, &
+    call configure_case(case_data, wavenumber, characteristic_length, exterior_domain_normal_sign, &
                         trim(formulation_mode))
 
     call reset_au_fields(case_data, status, message)
@@ -126,14 +126,14 @@ program ValidateManufacturedExterior
 
 contains
 
-    subroutine configure_case(case_data, wavenumber, characteristic_length, exterior_free_term_sign, &
+    subroutine configure_case(case_data, wavenumber, characteristic_length, exterior_domain_normal_sign, &
                               formulation_mode)
         ! Fill the allocated case with nondimensional exterior test data.
         ! Density and sound speed are one, so angular frequency equals k.
         type(au_case_type), intent(inout) :: case_data
         real(dp), intent(in) :: wavenumber
         real(dp), intent(in) :: characteristic_length
-        integer, intent(in) :: exterior_free_term_sign
+        integer, intent(in) :: exterior_domain_normal_sign
         character(len=*), intent(in) :: formulation_mode
 
         select case (formulation_mode)
@@ -158,7 +158,7 @@ contains
         case_data%interior_medium(1)%wavenumber = cmplx(wavenumber, 0.0_dp, kind=dp)
 
         case_data%layer(1)%parent_particle_id = 0
-        case_data%layer(1)%exterior_free_term_sign = exterior_free_term_sign
+        case_data%layer(1)%exterior_domain_normal_sign = exterior_domain_normal_sign
         case_data%layer(1)%characteristic_length = characteristic_length
 
         case_data%boundary_condition(1)%kind = bc_dirichlet_external

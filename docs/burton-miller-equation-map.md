@@ -25,8 +25,8 @@ integration, while the sphere validation scripts test the complete numerical
 path.
 
 The code-space coupling weight is
-`w = i * exterior_free_term_sign * beta`, where `beta` is a length.
-For the supported outward-from-solid mesh, `exterior_free_term_sign=-1`
+`w = i * exterior_domain_normal_sign * beta`, where `beta` is a length.
+For the supported outward-from-solid mesh, `exterior_domain_normal_sign=-1`
 and `w=-i*beta`. Section 7 describes the boundary-condition elimination used
 for all three supported boundary conditions.
 
@@ -50,8 +50,12 @@ $$
 G_k(x_0,x)=\frac{\exp(ikr)}{r}, \qquad G_0(x_0,x)=\frac{1}{r}.
 $$
 
-There is no `1/(4*pi)` factor in either Green function. Consequently, the
-smooth-boundary free terms appear as `4*pi`, not `1`.
+There is no `1/(4*pi)` factor in either Green function. The BRIEF subtraction
+cancels the local solid-angle coefficient `c(x0)` analytically, so the code
+does not insert a smooth-boundary value of `1/2` or `2*pi`. The explicit
+exterior-at-infinity contributions that remain in the regularised equations
+therefore have magnitude `4*pi`; with `1/(4*pi)`-normalised Green functions,
+their magnitude would instead be `1`.
 
 The paper's normal points out of the exterior acoustic domain and into the
 solid. The normal stored by the standard AU mesh points out of the solid and
@@ -62,8 +66,9 @@ $$
 q_{\rm mesh}=-q_{\rm paper},\qquad s_{\rm mesh}=-s_{\rm paper},
 $$
 
-and `exterior_free_term_sign=-1`. In the rest of this document, unadorned operator symbols
-refer to the stored-mesh-normal convention used by the modern code.
+and `exterior_domain_normal_sign=-1`. In the rest of this document, unadorned
+operator symbols refer to the stored-mesh-normal convention used by the modern
+code.
 
 ## 3. Published Equations in Operator Form
 
@@ -201,7 +206,7 @@ $$
 \qquad \sigma\in\{-1,+1\}.
 $$
 
-In AU data, `sigma` is `layer(particle_id)%exterior_free_term_sign`. Reversing both source
+In AU data, `sigma` is `layer(particle_id)%exterior_domain_normal_sign`. Reversing both source
 and collocation normals gives the following operator transformation:
 
 | Quantity | Mesh-normal value |
@@ -226,7 +231,7 @@ w=-i\beta.
 $$
 
 The function `burton_miller_coupling_weight` includes
-`exterior_free_term_sign` to express this normal transformation explicitly.
+`exterior_domain_normal_sign` to express this normal transformation explicitly.
 The public Burton-Miller runner currently accepts only outward-from-solid meshes.
 
 This simple row-wise transformation assumes that all boundary components of one
@@ -243,12 +248,12 @@ The Burton-Miller coupling weight must left-multiply rows later in
 | Mathematical operator | Modern array | Meaning after global assembly |
 |---|---|---|
 | `G` | `external_g` | Regularised Helmholtz single-layer operator |
-| `H` | `external_h` | Regularised Helmholtz double-layer operator plus the ordinary exterior free term |
+| `H` | `external_h` | Regularised Helmholtz double-layer operator plus the exterior-at-infinity contribution |
 | `K` | `bm_dg_dn0` | Collocation-normal derivative acting on `q`, including the oriented image of the paper's diagonal `-4*pi*q0` term |
 | `D` | `bm_d2g_dndn0` | Regularised mixed second-normal-derivative operator acting on `phi` |
 | `L` | `bm_minus_dg0_dn0` | Auxiliary static derivative operator acting on `s` |
 | `G0` | `bm_g0` | Regularised static single-layer operator |
-| `H0` | `bm_h0` | Regularised static double-layer operator plus its free term |
+| `H0` | `bm_h0` | Regularised static double-layer operator plus its exterior-at-infinity contribution |
 | `w_i` | `bm_coupling_weight(i)` | Coupling applied to collocation row `i` |
 
 The array declarations are in
@@ -285,24 +290,29 @@ The nodal parts paired with these corrections are:
 - `bm%g0(:) = integral N_a G0` on the same particle; and
 - `bm%h0(:) = integral N_a dG0/dn` on the same particle.
 
-The analytical diagonal free terms are assembled as follows. Define
-`F_i = 4*pi*exterior_free_term_sign(i)`.
+The local solid angle is absent from these operators. The remaining analytical
+exterior-at-infinity contributions are assembled as follows. Define
+`I_i = 4*pi*exterior_domain_normal_sign(i)`.
 
-| Operator | Diagonal free term in modern code |
+| Operator | Explicit exterior contribution in modern code |
 |---|---:|
-| `H` | `+F_i` only when the exterior domain reaches infinity |
-| `K` | `-F_i` |
-| `L` | `+F_i` |
-| `H0` | `+F_i` |
+| `H` | `+I_i` only when the exterior domain reaches infinity |
+| `K` | `-I_i` |
+| `L` | `+I_i` |
+| `H0` | `+I_i` |
 | `G`, `D`, `G0` | none |
 
-For an isolated outward-normal solid, `F_i=-4*pi`. These placements agree with
-the paper after the normal transformation in Section 4.
+For an isolated outward-normal solid, `I_i=-4*pi`. These placements agree with
+the paper after the normal transformation in Section 4. They are the oriented
+images of the surface-at-infinity terms in the exterior auxiliary identities,
+not local solid-angle approximations.
 
-`internal_h` receives no free term in the existing ordinary bounded-domain
-assembly, and no internal Burton-Miller operators are assembled. The solver rejects `use_burton_miller=.true.` for internal or transmission
-equation rows. The table above specifies the external Burton-Miller path; it is
-not an implicit derivation of an interior augmented formulation.
+`internal_h` receives no exterior-at-infinity contribution in the existing
+ordinary bounded-domain assembly, and no internal Burton-Miller operators are
+assembled. The solver rejects `use_burton_miller=.true.` for
+internal or transmission equation rows. The table above specifies the external
+Burton-Miller path; it is not an implicit derivation of an interior augmented
+formulation.
 
 ### 5.2 Kernel formula check
 
@@ -349,7 +359,7 @@ H_0\phi-G_0s=0. \tag{H}
 $$
 
 The multiplication by `W` is on the left because each collocation row has its
-own coupling length and exterior free-term sign.
+own coupling length and exterior-domain normal sign.
 
 Let `u` contain the one physical unknown selected at every node. Express the
 scattered boundary fields as
@@ -443,7 +453,7 @@ The public Burton-Miller solver accepts:
 
 - exterior Dirichlet, Neumann, or Robin equations only;
 - one closed, connected particle;
-- `exterior_free_term_sign=-1` with a verified outward-from-solid mesh;
+- `exterior_domain_normal_sign=-1` with a verified outward-from-solid mesh;
 - real, positive acoustic wavenumber; and
 - no transmission condition.
 
