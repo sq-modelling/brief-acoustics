@@ -307,8 +307,17 @@ For the Burton-Miller equations and their implementation, see
 
 ## Citation
 
-If you use this software, cite it using the metadata in
-[`CITATION.cff`](CITATION.cff).
+If you use this software, cite the release metadata in
+[`CITATION.cff`](CITATION.cff). If you use the non-singular Burton--Miller
+formulation, also cite its method paper:
+
+> Q. Sun and E. Klaseboer, "Non-Singular Burton-Miller Boundary Element Method
+> for Acoustics," *Fluids* 8(2), 56 (2023).
+> <https://doi.org/10.3390/fluids8020056>
+
+The *Fluids* article is set as `preferred-citation` so that GitHub's
+**Cite this repository** menu exposes it directly. The repository metadata and
+other method references are also recorded in `CITATION.cff`.
 
 ## External Alpha Testing
 

@@ -1,5 +1,8 @@
 cff-version: 1.2.0
-message: "If you use BRIEF-Acoustics in your research, please cite this software."
+message: >-
+  If you use BRIEF-Acoustics in your research, please cite this software. If
+  you use its non-singular Burton-Miller formulation, please also cite the
+  preferred method paper below.
 title: "BRIEF-Acoustics: acoustic non-singular boundary element method solver"
 version: "0.1.0-alpha.1"
 date-released: 2026-08-29
@@ -27,6 +30,19 @@ keywords:
   - Fortran
   - Python
 license: "BSD-3-Clause"
+preferred-citation:
+  type: article
+  title: "Non-Singular Burton-Miller Boundary Element Method for Acoustics"
+  authors:
+    - family-names: "Sun"
+      given-names: "Qiang"
+    - family-names: "Klaseboer"
+      given-names: "Evert"
+  journal: "Fluids"
+  volume: 8
+  issue: 2
+  year: 2023
+  doi: "10.3390/fluids8020056"
 references:
   - type: article
     title: "Non-singular boundary integral methods for fluid mechanics applications"
