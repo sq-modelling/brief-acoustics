@@ -34,7 +34,8 @@ after the compiler and Python dependencies are available.
 3. Install BRIEF-Acoustics from the repository.
 4. Check the default rigid-sphere case.
 5. Run that case and inspect the generated summary and surface output.
-6. Submit the external-test GitHub issue form, including successful reports.
+6. Send a local test report or submit the external-test GitHub issue form,
+   including successful reports.
 
 On macOS or Linux:
 
@@ -87,7 +88,49 @@ regression. It takes longer and is not required from every usability tester.
 
 ## What To Report
 
-Use the GitHub issue form named **External alpha test report**. Record:
+### Local Report (No GitHub Account Needed)
+
+From the repository root, using the same Python environment as your test:
+
+```sh
+python3 scripts/make_test_report.py --results external-test-results/minimal
+```
+
+This creates `external-test-results/test-report.md`. Open it in a text editor,
+fill in **Tester Confirmation**, the time required, any confusing steps and
+your optional research application. Send the file to the maintainer as an
+attachment, or copy its contents into a message. Nothing is uploaded automatically.
+The output directory is ignored by Git.
+
+If installation or the example failed before producing results, omit `--results`:
+
+```sh
+python3 scripts/make_test_report.py
+```
+
+The script needs only Python 3.10+ and its standard library; it does not need a
+working BRIEF-Acoustics installation. It records OS, CPU architecture, Python,
+`gfortran`, installed package metadata and the current Git commit when available.
+For source archives, enter the tested release tag manually.
+
+It does not run the solver or validation. Existing summary metadata and output
+file presence are observations, not automatic passes: artifacts may be stale
+and are not linked to the current commit. Installation and test outcomes remain
+**Not confirmed** until you fill them in. Optional full-validation results and
+BLAS/LAPACK details are entered manually.
+
+An existing report is never overwritten. For another report, choose a new name:
+
+```sh
+python3 scripts/make_test_report.py --output external-test-results/test-report-second.md
+```
+
+The generated report excludes personal paths, hostnames, raw logs and mesh data.
+Review anything you add manually before sharing.
+
+### GitHub Issue Form
+
+Alternatively, use the GitHub issue form named **External alpha test report**. Record:
 
 - the release tag or commit tested;
 - operating system and CPU architecture;

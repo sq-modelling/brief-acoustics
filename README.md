@@ -354,6 +354,16 @@ scope, commands, expected outputs, and reporting form are described in
 usability testing complements, but does not replace, the analytical validation
 matrix.
 
+To prepare a local feedback attachment without a GitHub account, run:
+
+```sh
+python3 scripts/make_test_report.py --results external-test-results/minimal
+```
+
+Fill in the generated `external-test-results/test-report.md` and send it to the
+maintainer. Omit `--results` if no example results are available. This command
+does not run tests or upload anything; existing reports are never overwritten.
+
 ## Contributing And Support
 
 Before proposing a change, read [`CONTRIBUTING.md`](CONTRIBUTING.md). Use the
