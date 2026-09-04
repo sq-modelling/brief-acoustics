@@ -43,8 +43,7 @@ module AU_HelmholtzKernels
         ! terms used when the collocation node and source element belong to the
         ! same particle.
 
-        ! Integral of N_a * dG_k/dn0 over the element (operator K in the
-        ! equation-to-code map).
+        ! Integral of N_a * dG_k/dn0 over the element (operator K).
         complex(dp), allocatable :: dg_dn0(:)
 
         ! Integral of N_a * d2G_k/(dn dn0) over the element (operator D).  For same-particle

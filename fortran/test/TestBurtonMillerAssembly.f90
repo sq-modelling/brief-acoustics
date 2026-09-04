@@ -2,7 +2,7 @@ program TestBurtonMillerAssembly
     ! Check the algebra of the 2N x 2N Burton-Miller system independently of
     ! mesh integration.  We provide small artificial operator matrices, ask
     ! AU_Solver to assemble the final system, and compare every entry with
-    ! Equation (J) in docs/burton-miller-equation-map.md.
+    ! the block equations written below in build_expected_system.
     use Pre_Constants, only: dp, complex_zero
     use Geom_Types, only: geometry_type
     use AU_Types, only: au_case_type, allocate_au_case, &
@@ -260,10 +260,14 @@ contains
 
     subroutine build_expected_system(phi_bar, phi_coefficient, q_bar, q_coefficient, &
                                      expected_matrix, expected_rhs)
-        ! Construct Equation (J) directly:
+        ! Construct the augmented block system directly:
         !
         !   [ Hc*P-Gc*Q   -W*L ] [u] = [-Hc*phi_bar+Gc*q_bar]
         !   [ H0*P         -G0  ] [s]   [-H0*phi_bar]
+        !
+        ! Boundary elimination gives phi=phi_bar+P*u and q=q_bar+Q*u.
+        ! W contains the row coupling weights; Hc=H+W*D and Gc=G+W*K.
+        ! s is the normal derivative of the auxiliary harmonic field.
         complex(dp), intent(in) :: phi_bar(node_count)
         complex(dp), intent(in) :: phi_coefficient(node_count)
         complex(dp), intent(in) :: q_bar(node_count)

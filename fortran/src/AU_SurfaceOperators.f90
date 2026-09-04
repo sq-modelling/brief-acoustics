@@ -13,8 +13,8 @@ module AU_SurfaceOperators
     ! or prescribed boundary data contributes to that equation.
     !
     ! The data structures also retain ordinary interior-domain blocks for the
-    ! research path.  The public v1.0 runner solves one exterior particle; only
-    ! its Burton-Miller operator set has a completed equation-to-code audit.
+    ! research path.  The public runner solves one exterior particle with
+    ! either the ordinary or the Burton-Miller formulation.
     use Pre_Constants, only: dp, complex_zero
     use Geom_Types, only: geometry_type
     use AU_Types, only: au_case_type
@@ -50,9 +50,9 @@ module AU_SurfaceOperators
         ! Burton-Miller row coupling parameter stored per collocation node.
         complex(dp), allocatable :: bm_coupling_weight(:)
 
-        ! Burton-Miller auxiliary blocks.  The short mathematical names used in
-        ! docs/burton-miller-equation-map.md are shown below.  That document is
-        ! the authoritative source for signs and explicit exterior 4*pi terms.
+        ! Burton-Miller auxiliary blocks; their mathematical names are below.
+        ! Regularisation and exterior-at-infinity contributions are included
+        ! during assembly in this module.
         ! K = normal derivative of the Helmholtz single-layer kernel.
         complex(dp), allocatable :: bm_dg_dn0(:, :)
         ! D = mixed-normal derivative of the Helmholtz kernel.

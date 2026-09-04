@@ -320,16 +320,13 @@ summary.
 
 ```text
 ana/          Analytical sphere solutions used by validation.
-docs/         Case format, mathematical implementation notes, and testing guide.
+docs/         Case format and external testing guide.
 examples/     Public ordinary and Burton-Miller TOML cases and meshes.
 fortran/      Modern Fortran solver core, public driver, and validation apps.
 python/       Python case runner, mesh audit, post-processing, and tests.
 scripts/      Developer and CI validation commands.
 validation/   Reproducible validation cases.
 ```
-
-For the Burton-Miller equations and their implementation, see
-[`docs/burton-miller-equation-map.md`](docs/burton-miller-equation-map.md).
 
 ## Citation
 
